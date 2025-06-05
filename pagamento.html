@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Pagamento</title>
+    <style>
+        body {
+        font-family: Arial, Helvetica, sans-serif;
+        padding: 20px;
+        background: rgb(223, 31, 31);
+        font-weight: bold;
+        }
+
+        h2 {
+            text-align: center;
+            font-size: 4vh;
+        }
+
+        .container {
+        background: #fff;
+        padding: 30px;
+        max-width: 600px;
+        margin: auto;
+        border-radius: 10px;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+
+        label, select, input, button {
+        display: flex;
+        width: 100%;
+        margin-top: 15px;
+        padding: 6px;
+        font-size: 16px;
+        justify-content: center;
+        }
+
+        button {
+        background-color: rgb(223, 31, 31);
+        font-weight: bold;
+        color: white;
+        border: none;
+        border-radius: 10px;
+        margin-top: 25px;
+        }
+        a {
+            text-decoration: none;
+        }
+
+        button:hover {
+        background-color: rgb(250, 98, 98);
+        }
+
+        pre {
+        background: rgb(223, 31, 31);
+        padding: 15px;
+        margin-top: 20px;
+        border-radius: 8px;
+        color: #fff;
+        flex-wrap: wrap;
+        }
+
+        #parcelas-container {
+        display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Pagamento</h2>
+
+        <form onsubmit="realizarPagamento(event)">
+        <label>Valor da Transação (em centavos):</label>
+        <input type="number" id="valor" placeholder="Ex: 1000 = R$10,00" required>
+
+        <label>Nome do Comprador:</label>
+        <input type="text" id="nomeComprador" placeholder="Ex: João da Silva" required>
+
+        <label>Bandeira do Cartão:</label>
+        <select id="cardBrand" required>
+            <option value="Visa">Visa</option>
+            <option value="Mastercard">Mastercard</option>
+            <option value="Elo">Elo</option>
+            <option value="Amex">Amex</option>
+        </select>
+
+        <label>Código de Segurança:</label>
+        <input type="text" id="securityCode" placeholder="Ex: 123" required>
+
+        <label>Mês de Vencimento:</label>
+        <input type="text" id="expirationMonth" placeholder="Ex: 12" required>
+
+        <label>Ano de Vencimento:</label>
+        <input type="text" id="expirationYear" placeholder="Ex: 2025" required>
+
+        <label>Método de Pagamento:</label>
+        <select id="metodo" onchange="toggleParcelas()" required>
+            <option value="DEBIT">Débito</option>
+            <option value="CREDIT">Crédito</option>
+        </select>
+
+        <label>Tipo de parcelamento:</label>
+        <select id="tipoParcelado" required>
+            <option value="Full">À vista</option>
+            <option value="INSTALL_NO_INTEREST">Parcelado sem Juros</option>
+            <option value="INSTALL_WITH_INTEREST">Parcelado com Juros</option>
+        </select>
+
+        <div id="parcelas-container">
+            <label>Quantidade de Parcelas:</label>
+            <select id="parcelas">
+            <option value="1">1x</option>
+            <option value="2">2x</option>
+            <option value="3">3x</option>
+            <option value="4">4x</option>
+            <option value="5">5x</option>
+            <option value="6">6x</option>
+            <option value="7">7x</option>
+            <option value="8">8x</option>
+            <option value="9">9x</option>
+            <option value="10">10x</option>
+            <option value="11">11x</option>
+            <option value="12">12x</option>
+            </select>
+        </div>
+
+        <button type="submit">Pagar</button>
+        </form>
+
+        <pre id="respostaPagamento"></pre>
+        <a href="./cartao.html">
+            <button id="voltar" type="button">Voltar</button>
+        </a>
+    </div>
+
+    <script>
+        function toggleParcelas() {
+            const metodo = document.getElementById("metodo").value;
+            const container = document.getElementById("parcelas-container");
+            container.style.display = metodo === "CREDIT" ? "block" : "none";
+        }
+
+        async function realizarPagamento(event) {
+            event.preventDefault();
+
+            const token = sessionStorage.getItem("access_token");
+            const sellerId = sessionStorage.getItem("seller_id");
+            const numberToken = sessionStorage.getItem("number_token");
+
+            if (!token || !sellerId || !numberToken) {
+                alert("Faltam dados necessários. Volte à etapa anterior.");
+                return;
+            }
+
+            const valor = parseInt(document.getElementById("valor").value);
+            const nome = document.getElementById("nomeComprador").value;
+            const metodo = document.getElementById("metodo").value;
+            const parcelas = metodo === "CREDIT" ? parseInt(document.getElementById("parcelas").value) : 1;
+            const cardBrand = document.getElementById("cardBrand").value;
+            const securityCode = document.getElementById("securityCode").value;
+            const expirationMonth = document.getElementById("expirationMonth").value;
+            const expirationYear = document.getElementById("expirationYear").value;
+
+            const body = {
+                seller_id: sellerId,
+                amount: valor,
+                currency: "BRL",
+                order: {
+                    order_id: "pedido_" + Date.now(),
+                    sales_tax: 0,
+                    product_type: "service"
+                },
+                customer: {
+                    customer_id: "cliente_" + Date.now(),
+                    first_name: nome.split(" ")[0],
+                    last_name: nome.split(" ").slice(1).join(" "),
+                    name: nome,
+                    email: "customer@email.com.br",
+                    document_type: "CPF",
+                    document_number: "12345678912",
+                    phone_number: "5551999887766",
+                    billing_address: {
+                        street: "Av. Brasil",
+                        number: "1000",
+                        complement: "Sala 1",
+                        district: "São Geraldo",
+                        city: "Porto Alegre",
+                        state: "RS",
+                        country: "Brasil",
+                        postal_code: "90230060"
+                    },
+                },
+                device: {
+                    ip_address: "127.0.0.1",
+                    device_id: "dispositivo_teste"
+                },
+                [metodo.toLowerCase()]: {
+                    transaction_type: "FULL",
+                    number_installments: parcelas,
+                    card: {
+                        number_token: numberToken,
+                        security_code: securityCode,
+                        cardholder_name: nome,
+                        brand: cardBrand,
+                        expiration_month: expirationMonth,
+                        expiration_year: expirationYear
+                    }
+                }
+            };
+
+            const res = await fetch(`https://api-homologacao.getnet.com.br/v1/payments/${metodo.toLowerCase()}`, {
+                method: "POST",
+                headers: {
+                    "Authorization": "Bearer " + token,
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(body)
+            });
+
+            const data = await res.json();
+            document.getElementById("respostaPagamento").textContent = JSON.stringify(data, null, 2);
+        }
+    </script>
+</body>
+</html>

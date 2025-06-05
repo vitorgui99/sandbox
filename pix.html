@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Pagamento com PIX</title>
+</head>
+<body>
+    <h2>Simulação de Pagamento com PIX</h2>
+
+    <form onsubmit="simularPix(event)">
+        <label>ID do Cliente:</label>
+        <input type="text" id="customerId" value="cliente123">
+
+        <label>Valor:</label>
+        <input type="text" id="valor" value="1000">
+
+        <button type="submit">Simular PIX</button>
+    </form>
+
+    <pre id="resultado"></pre>
+
+    <script>
+        async function simularPix(event) {
+        event.preventDefault();
+
+        const token = sessionStorage.getItem('access_token');
+        const sellerId = sessionStorage.getItem('seller_id');
+
+        if (!token || !sellerId) {
+            alert("Volte à página inicial e gere um token.");
+            return;
+        }
+
+        const body = {
+            amount: {
+            currency: "BRL",
+            value: parseInt(document.getElementById('valor').value)
+            },
+            order: {
+            order_id: "pedido123"
+            },
+            customer: {
+            customer_id: document.getElementById('customerId').value
+            }
+        };
+
+        const res = await fetch("https://api-homologacao.getnet.com.br/v1/payments/pix", {
+            method: "POST",
+            headers: {
+            "Authorization": "Bearer " + token,
+            "Content-Type": "application/json",
+            "seller_id": sellerId
+            },
+            body: JSON.stringify(body)
+        });
+
+        const data = await res.json();
+        document.getElementById("resultado").textContent = JSON.stringify(data, null, 2);
+        }
+    </script>
+</body>
+</html>

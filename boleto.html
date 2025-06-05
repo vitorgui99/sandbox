@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Pagamento por Boleto</title>
+</head>
+<body>
+    <h2>Simulação de Pagamento com Boleto</h2>
+
+    <form onsubmit="simularBoleto(event)">
+        <label>ID do Cliente:</label>
+        <input type="text" id="customerId" value="cliente123">
+
+        <label>Valor:</label>
+        <input type="text" id="valor" value="2000">
+
+        <button type="submit">Simular Boleto</button>
+    </form>
+
+    <pre id="resultado"></pre>
+
+    <script>
+        async function simularBoleto(event) {
+        event.preventDefault();
+
+        const token = sessionStorage.getItem('access_token');
+        const sellerId = sessionStorage.getItem('seller_id');
+
+        if (!token || !sellerId) {
+            alert("Volte à página inicial e gere um token.");
+            return;
+        }
+
+        const body = {
+            seller_id: sellerId,
+            amount: {
+            currency: "BRL",
+            value: parseInt(document.getElementById('valor').value)
+            },
+            payment: {
+            boleto: {
+                document_number: "12345678901",
+                expiration_date: "2025-12-31",
+                instructions: "Pagar até a data de vencimento"
+            }
+            },
+            customer: {
+            customer_id: document.getElementById('customerId').value,
+            first_name: "João",
+            last_name: "da Silva",
+            email: "joao@email.com",
+            document_type: "CPF",
+            document_number: "12345678901"
+            },
+            order: {
+            order_id: "pedido456"
+            }
+        };
+
+        const res = await fetch("https://api-homologacao.getnet.com.br/v1/payments/boleto", {
+            method: "POST",
+            headers: {
+            "Authorization": "Bearer " + token,
+            "Content-Type": "application/json",
+            "seller_id": sellerId
+            },
+            body: JSON.stringify(body)
+        });
+
+        const data = await res.json();
+        document.getElementById("resultado").textContent = JSON.stringify(data, null, 2);
+        }
+    </script>
+</body>
+</html>

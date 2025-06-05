@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Ambiente de Teste - Getnet</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+<style>
+    * {
+        box-sizing: border-box;
+        font-weight: bold;
+    }
+
+    body {
+        font-family: Arial, Helvetica, sans-serif;
+        background-color: rgb(223, 31, 31);
+        margin: 0;
+        padding: 20px;
+        display: flex;
+        justify-content: center;
+    }
+
+    .container {
+        background-color: white;
+        max-width: 600px;
+        width: 100%;
+        padding: 30px;
+        border-radius: 12px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    h2, h3 {
+        text-align: center;
+        color: #333;
+        margin-bottom: 20px;
+    }
+
+    label {
+        font-weight: bold;
+        display: block;
+        margin-top: 15px;
+        margin-bottom: 5px;
+        color: #333;
+    }
+
+    input, button {
+        width: 100%;
+        padding: 12px;
+        margin-top: 5px;
+        font-size: 16px;
+        border-radius: 8px;
+        border: 1px solid rgb(247, 37, 37);
+    }
+
+    button {
+        background-color: rgb(223, 31, 31);
+        color: white;
+        border: none;
+        margin-top: 20px;
+        transition: background-color 0.3s ease;
+        cursor: pointer;
+    }
+
+    button:hover {
+        background-color: rgb(250, 98, 98);
+    }
+
+    pre {
+        background-color: rgb(223, 31, 31);
+        padding: 15px;
+        border: 1px solid #ddd;
+        color: white;
+        border-radius: 8px;
+        margin-top: 20px;
+        white-space: pre-wrap;
+        word-break: break-word;
+        text-align: center;
+    }
+
+    hr {
+        margin-top: 30px;
+    }
+    
+    footer {
+        color: #fff;
+        padding: 20px;
+        text-align: end;
+        font-size: 14px;
+        position: fixed;
+        bottom: 0;
+        bottom: 0;
+        left: 0;
+    }
+
+</style>
+
+</head>
+<body>
+    <div class="container">
+        <h2>Sandbox 2.0</h2>
+
+        <label for="clientId">Client ID:</label>
+        <input type="text" id="clientId" placeholder="Digite seu Client ID">
+
+        <label for="clientSecret">Client Secret:</label>
+        <input type="text" id="clientSecret" placeholder="Digite seu Client Secret">
+
+        <label for="sellerId">Seller ID:</label>
+        <input type="text" id="sellerId" placeholder="Digite seu Seller ID">
+
+        <button onclick="gerarToken()">Gerar Access Token</button>
+
+        <pre id="output">Token será exibido aqui...</pre>
+
+        <hr>
+
+        <h3>Escolha o Método de Pagamento:</h3>
+        <button onclick="irPara('cartao.html')">Pagamento com Cartão</button>
+        <button onclick="irPara('pix.html')">Pagamento com PIX</button>
+        <button onclick="irPara('boleto.html')">Pagamento por Boleto</button>
+    </div>
+
+    <script>
+        function gerarToken() {
+            const clientId = document.getElementById('clientId').value;
+            const clientSecret = document.getElementById('clientSecret').value;
+            const sellerId = document.getElementById('sellerId').value;
+
+            if (!clientId || !clientSecret || !sellerId) {
+                alert("Preencha todas as credenciais.");
+                return;
+            }
+
+            const auth = btoa(`${clientId}:${clientSecret}`);
+            const body = new URLSearchParams();
+            body.append('grant_type', 'client_credentials');
+
+            fetch('https://api-homologacao.getnet.com.br/auth/oauth/v2/token', {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Basic ${auth}`, 
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: body
+            })
+            .then(res => res.json())
+            .then(data => {
+                document.getElementById('output').textContent = JSON.stringify(data, null, 2);
+                sessionStorage.setItem('access_token', data.access_token);
+                sessionStorage.setItem('client_id', clientId);
+                sessionStorage.setItem('client_secret', clientSecret);
+                sessionStorage.setItem('seller_id', sellerId);
+            })
+            .catch(err => {
+                document.getElementById('output').textContent = "Erro: " + err;
+            });
+        }
+
+        function irPara(pagina) {
+            const token = sessionStorage.getItem('access_token');
+            const sellerId = sessionStorage.getItem('seller_id');
+
+            if (!token || !sellerId) {
+                alert("Você precisa gerar o token antes de continuar.");
+                return;
+            }
+
+            window.location.href = pagina;
+        }
+    </script>
+    <footer>
+        <p>
+        <small>
+            Copyright &copy; 2025 - victorDEV
+        </small>
+        </p>
+    </footer>
+</body>
+</html>
