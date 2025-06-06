@@ -2,7 +2,7 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <title>Pagamento</title>
+    <title>Pagamento com cartão</title>
     <style>
         body {
         font-family: Arial, Helvetica, sans-serif;
@@ -13,7 +13,7 @@
 
         h2 {
             text-align: center;
-            font-size: 4vh;
+            font-size: 25px;
         }
 
         .container {
@@ -25,13 +25,27 @@
         box-shadow: 0 4px 10px rgba(0,0,0,0.1);
         }
 
+        hr {
+        margin-top: 30px;
+        max-width: 100%;
+    }
+
         label, select, input, button {
         display: flex;
         width: 100%;
-        margin-top: 15px;
         padding: 6px;
         font-size: 16px;
-        justify-content: center;
+        border-radius: 10px;
+        }
+
+        input {
+            margin-top: 6px;
+            border: 1px solid #c9c9c9;
+            max-width: 98%;
+        }
+
+        select {
+            border: 1px solid #c9c9c9;
         }
 
         button {
@@ -42,6 +56,14 @@
         border-radius: 10px;
         margin-top: 25px;
         }
+
+        .container #botao button,
+        .container #botao  {
+            display: flex;
+            text-align: center;
+            justify-content: center;
+        }
+
         a {
             text-decoration: none;
         }
@@ -66,7 +88,9 @@
 </head>
 <body>
     <div class="container">
-        <h2>Pagamento</h2>
+        <h2>Pagamento com Cartão</h2>
+
+        <hr>
 
         <form onsubmit="realizarPagamento(event)">
         <label>Valor da Transação (em centavos):</label>
@@ -122,14 +146,14 @@
             <option value="12">12x</option>
             </select>
         </div>
+        <div id="botao">
+            <button type="submit">Pagar</button>
 
-        <button type="submit">Pagar</button>
-        </form>
-
-        <pre id="respostaPagamento"></pre>
-        <a href="./cartao.html">
-            <button id="voltar" type="button">Voltar</button>
-        </a>
+            <pre id="respostaPagamento">Response</pre>
+            <a href="./cartao.html">
+                <button id="voltar" type="button">Voltar</button>
+            </a>
+        </div>
     </div>
 
     <script>
@@ -195,7 +219,7 @@
                     device_id: "dispositivo_teste"
                 },
                 [metodo.toLowerCase()]: {
-                    transaction_type: "FULL",
+                    transaction_type: parcelado,
                     number_installments: parcelas,
                     card: {
                         number_token: numberToken,
