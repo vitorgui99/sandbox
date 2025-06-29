@@ -1,68 +1,72 @@
-body {
-    font-family: "Segoe UI", sans-serif;
-    background-color: rgb(223, 31, 31);
+* {
+    box-sizing: border-box;
     font-weight: bold;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: rgb(223, 31, 31);
     margin: 0;
-    padding: 40px;
+    padding: 20px;
+    display: flex;
+    justify-content: center;
 }
 
-h2 {
-    text-align: center;
-    color: #fff;
-}
-
-form {
-    max-width: 400px;
-    background-color: #fff;
+.container {
+    background-color: white;
+    max-width: 600px;
+    width: 100%;
     padding: 30px;
-    margin: 0 auto;
-    border-radius: 10px;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+h2, h3 {
+    text-align: center;
+    color: #333;
+    margin-bottom: 20px;
 }
 
 label {
+    font-weight: 600;
     display: block;
-    margin-top: 20px;
-    font-weight: bold;
-    color: #000;
+    margin-top: 15px;
+    margin-bottom: 5px;
+    color: #333;
 }
 
-input {
+input, button {
     width: 100%;
-    padding: 10px;
+    padding: 12px;
     margin-top: 5px;
-    border: 1px solid #000;
-    border-radius: 5px;
-    box-sizing: border-box;
+    font-size: 16px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
 }
 
 button {
-    width: 100%;
     background-color: rgb(247, 37, 37);
-    color: #fff;
-    padding: 12px;
+    color: white;
     border: none;
-    border-radius: 6px;
-    font-size: 16px;
-    font-weight: bold;
-    margin-top: 30px;
-    cursor: pointer;
+    margin-top: 20px;
     transition: background-color 0.3s ease;
+    cursor: pointer;
 }
 
 button:hover {
     background-color: rgb(250, 98, 98);
 }
 
-#resultado {
-    max-width: 600px;
-    margin: 30px auto;
-    background-color: #fff;
-    padding: 20px;
-    border-radius: 10px;
-    border: 1px solid #000;
-    font-family: monospace;
+pre {
+    background-color: #f6f8fa;
+    padding: 15px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    margin-top: 20px;
     white-space: pre-wrap;
     word-break: break-word;
-    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+}
+
+hr {
+    margin-top: 30px;
 }

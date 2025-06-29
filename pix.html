@@ -1,74 +1,84 @@
 <!DOCTYPE html>
 <html lang="pt-br">
-<head>
-    <meta charset="UTF-8">
-    <title>Pagamento com PIX</title>
-    <link rel="stylesheet" href="./source/pix.css">
-</head>
-<body>
-    <div>
-        <h2>Pagamento com PIX</h2>
+    <head>
+        <meta charset="UTF-8" />
+        <title>Pagamento com PIX</title>
+        <link rel="stylesheet" href="./source/pix.css" />
+    </head>
+    <body>
+        <div class="container">
+            <h2>Pagamento com PIX</h2>
+            <form onsubmit="simularPix(event)">
+                <label>Valor (em centavos):</label>
+                <input type="number" id="valor" value="1000">
 
-        <form onsubmit="simularPix(event)">
-            <label>ID do Cliente:</label>
-            <input type="text" id="customerId" value="">
+                <label>Currency: (exemplo: "BRL")</label>
+                <input type="text" id="currency" value="BRL">
 
-            <label>Valor:</label>
-            <input type="text" id="valor" value="1000">
+                <label>Order id: (exemplo: "DEV-1608748980")</label>
+                <input type="text" id="orderId" value="DEV-1608748980">
 
-            <button type="submit">Simular PIX</button>
+                <label>ID do Cliente:</label>
+                <input type="text" id="customerId" value="cliente123">
 
-            <pre id="resultado"></pre>
-            
-            <a href="./index.html">
-                <button type="button">Voltar</button>
-            </a>
-        </form>
+                <button type="submit">Simular PIX</button>
+            </form>
 
-    </div>
+            <pre id="resultado">Resposta será exibida aqui...</pre>
 
-    <script>
-        async function simularPix(event) {
-        event.preventDefault();
+            <button onclick="voltar()">Voltar para a Página Inicial</button>
+        </div>
 
-        const token = sessionStorage.getItem('access_token');
-        const sellerId = sessionStorage.getItem('seller_id');
+        <script>
+            async function simularPix(event) {
+            event.preventDefault();
 
-        if (!token || !sellerId) {
-            alert("Volte à página inicial e gere um token.");
-            return;
-        }
+            const token = sessionStorage.getItem('access_token');
+            const sellerId = sessionStorage.getItem('seller_id');
 
-        const body = {
-            seller_id: sellerId,
-            payment: {
-                payment_method: "pix",
-                amount: {
-                currency: "BRL",
-                value: valor
-                },
+            if (!token || !sellerId) {
+                alert("Volte à página inicial e gere um token.");
+                return;
+            }
+
+            const body = {
+                amount: parseInt(document.getElementById('valor').value),
+                currency: document.getElementById('currency').value,
                 order: {
-                order_id: "pedido123"
+                    order_id: document.getElementById('orderId').value
+                },
+
+                payment: {
+                    pix: {}
                 },
                 customer: {
-                customer_id: customerId
+                    customer_id: document.getElementById('customerId').value,
+                    first_name: "João",
+                    last_name: "da Silva",
+                    email: "joao@email.com",
+                    document_type: "CPF",
+                    document_number: "12345678901"
                 }
+            };
+
+
+            const res = await fetch("https://api-homologacao.getnet.com.br/v1/payments/qrcode", {
+                method: "POST",
+                headers: {
+                "Authorization": "Bearer " + token,
+                "Content-Type": "application/json",
+                "seller_id": sellerId
+                },
+                body: JSON.stringify(body)
+            });
+
+            const data = await res.json();
+            document.getElementById("resultado").textContent = JSON.stringify(data, null, 2);
             }
-        };
 
-        const res = await fetch("https://api-homologacao.getnet.com.br/v1/payments/pix", {
-            method: "POST",
-            headers: {
-            "Authorization": "Bearer " + token,
-            "Content-Type": "application/json",
-            "seller_id": sellerId
-            },
-            body: JSON.stringify(body)
-        });
-
-        const data = await res.json();
-        document.getElementById("resultado").textContent = JSON.stringify(data, null, 2);
-        }
-    </script>
-</body>
+            function voltar() {
+                window.location.href = "index.html";
+            }
+        </script>
+    </body>
 </html>

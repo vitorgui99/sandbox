@@ -10,14 +10,14 @@
     <div class="container">
         <h2>Sandbox 2.0</h2>
 
+        <label for="sellerId">Seller ID:</label>
+        <input type="text" id="sellerId" placeholder="Digite seu Seller ID">
+
         <label for="clientId">Client ID:</label>
         <input type="text" id="clientId" placeholder="Digite seu Client ID">
 
         <label for="clientSecret">Client Secret:</label>
         <input type="text" id="clientSecret" placeholder="Digite seu Client Secret">
-
-        <label for="sellerId">Seller ID:</label>
-        <input type="text" id="sellerId" placeholder="Digite seu Seller ID">
 
         <button onclick="gerarToken()">Gerar Access Token</button>
 
@@ -33,11 +33,11 @@
 
     <script>
         function gerarToken() {
+            const sellerId = document.getElementById('sellerId').value;
             const clientId = document.getElementById('clientId').value;
             const clientSecret = document.getElementById('clientSecret').value;
-            const sellerId = document.getElementById('sellerId').value;
 
-            if (!clientId || !clientSecret || !sellerId) {
+            if (!sellerId || !clientSecret || !clientId) {
                 alert("Preencha todas as credenciais.");
                 return;
             }
