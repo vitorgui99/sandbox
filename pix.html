@@ -46,9 +46,7 @@
         amount: parseInt(document.getElementById('valor').value),
         currency: document.getElementById('currency').value,
         order_id: document.getElementById('orderId').value,
-        customer: {
-            customer_id: document.getElementById('customerId').value
-        }
+        customer_id: document.getElementById('customerId').value
         };
 
         const res = await fetch("https://api-homologacao.getnet.com.br/v1/payments/qrcode/pix", {
