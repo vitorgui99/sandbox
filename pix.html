@@ -10,19 +10,19 @@
     <div class="container">
         <h2>Pagamento com PIX</h2>
         <form onsubmit="simularPix(event)">
-            <label>Valor (em centavos):</label>
-            <input type="number" id="valor" value="1000">
+        <label>Valor (em centavos):</label>
+        <input type="number" id="valor" value="1000">
 
-            <label>Currency (exemplo: BRL):</label>
-            <input type="text" id="currency" value="BRL">
+        <label>Currency (exemplo: BRL):</label>
+        <input type="text" id="currency" value="BRL">
 
-            <label>Order ID:</label>
-            <input type="text" id="orderId" value="DEV-PIX-001">
+        <label>Order ID:</label>
+        <input type="text" id="orderId" value="DEV-PIX-001">
 
-            <label>ID do Cliente:</label>
-            <input type="text" id="customerId" value="cliente123">
+        <label>ID do Cliente:</label>
+        <input type="text" id="customerId" value="cliente123">
 
-            <button type="submit">Simular PIX</button>
+        <button type="submit">Simular PIX</button>
         </form>
 
         <pre id="resultado">Resposta será exibida aqui...</pre>
@@ -32,55 +32,45 @@
 
     <script>
         async function simularPix(event) {
-            event.preventDefault();
+        event.preventDefault();
 
-            const token = sessionStorage.getItem('access_token');
-            const sellerId = sessionStorage.getItem('seller_id');
+        const token = sessionStorage.getItem('access_token');
+        const sellerId = sessionStorage.getItem('seller_id');
 
-            if (!token || !sellerId) {
-                alert("Volte à página inicial e gere um token.");
-                return;
-            }
+        if (!token || !sellerId) {
+            alert("Volte à página inicial e gere um token.");
+            return;
+        }
 
-            const body = {
-                amount: parseInt(document.getElementById('valor').value),
-                currency: document.getElementById('currency').value,
-                order: {
-                    order_id: document.getElementById('orderId').value,
-                    sales_tax: 0,
-                    product_type: "service"
-                },
-                customer: {
-                    customer_id: document.getElementById('customerId').value,
-                    first_name: "João",
-                    last_name: "da Silva",
-                    email: "joao@email.com",
-                    document_type: "CPF",
-                    document_number: "12345678901",
-                    phone_number: "11999999999",
-                    billing_address: {
-                        street: "Rua Exemplo, 123"
-                    }
-                }
-            };
+        const body = {
+        amount: parseInt(document.getElementById('valor').value),
+        currency: document.getElementById('currency').value,
+        order: {
+            order_id: document.getElementById('orderId').value
+        },
+            customer: {
+            customer_id: document.getElementById('customerId').value
+        }
+        };
 
-            const res = await fetch("https://api-homologacao.getnet.com.br/v1/payments/qrcode", {
-                method: "POST",
-                headers: {
-                    "Authorization": "Bearer " + token,
-                    "Content-Type": "application/json",
-                    "seller_id": sellerId
-                },
-                body: JSON.stringify(body)
-            });
+        const res = await fetch("https://api-homologacao.getnet.com.br/v1/payments/qrcode/pix", {
+            method: "POST",
+            headers: {
+            "Authorization": "Bearer " + token,
+            "Content-Type": "application/json",
+            "seller_id": sellerId
+            },
+            body: JSON.stringify(body)
+        });
 
-            const data = await res.json();
-            document.getElementById("resultado").textContent = JSON.stringify(data, null, 2);
-            }
+        const data = await res.json();
+        document.getElementById("resultado").textContent = JSON.stringify(data, null, 2);
+        }
 
-            function voltar() {
-                window.location.href = "index.html";
+        function voltar() {
+        window.location.href = "index.html";
         }
     </script>
 </body>
 </html>
+
