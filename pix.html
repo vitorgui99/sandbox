@@ -1,36 +1,37 @@
 <!DOCTYPE html>
 <html lang="pt-br">
-    <head>
-        <meta charset="UTF-8" />
-        <title>Pagamento com PIX</title>
-        <link rel="stylesheet" href="./source/pix.css" />
-    </head>
-    <body>
-        <div class="container">
-            <h2>Pagamento com PIX</h2>
-            <form onsubmit="simularPix(event)">
-                <label>Valor (em centavos):</label>
-                <input type="number" id="valor" value="1000">
+<head>
+    <meta charset="UTF-8" />
+    <title>Pagamento com PIX</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="./source/pix.css" />
+</head>
+<body>
+    <div class="container">
+        <h2>Pagamento com PIX</h2>
+        <form onsubmit="simularPix(event)">
+            <label>Valor (em centavos):</label>
+            <input type="number" id="valor" value="1000">
 
-                <label>Currency: (exemplo: "BRL")</label>
-                <input type="text" id="currency" value="BRL">
+            <label>Currency (exemplo: BRL):</label>
+            <input type="text" id="currency" value="BRL">
 
-                <label>Order id: (exemplo: "DEV-1608748980")</label>
-                <input type="text" id="orderId" value="DEV-1608748980">
+            <label>Order ID:</label>
+            <input type="text" id="orderId" value="DEV-PIX-001">
 
-                <label>ID do Cliente:</label>
-                <input type="text" id="customerId" value="cliente123">
+            <label>ID do Cliente:</label>
+            <input type="text" id="customerId" value="cliente123">
 
-                <button type="submit">Simular PIX</button>
-            </form>
+            <button type="submit">Simular PIX</button>
+        </form>
 
-            <pre id="resultado">Resposta será exibida aqui...</pre>
+        <pre id="resultado">Resposta será exibida aqui...</pre>
 
-            <button onclick="voltar()">Voltar para a Página Inicial</button>
-        </div>
+        <button onclick="voltar()">Voltar para a Página Inicial</button>
+    </div>
 
-        <script>
-            async function simularPix(event) {
+    <script>
+        async function simularPix(event) {
             event.preventDefault();
 
             const token = sessionStorage.getItem('access_token');
@@ -45,11 +46,9 @@
                 amount: parseInt(document.getElementById('valor').value),
                 currency: document.getElementById('currency').value,
                 order: {
-                    order_id: document.getElementById('orderId').value
-                },
-
-                payment: {
-                    pix: {}
+                    order_id: document.getElementById('orderId').value,
+                    sales_tax: 0,
+                    product_type: "service"
                 },
                 customer: {
                     customer_id: document.getElementById('customerId').value,
@@ -57,17 +56,20 @@
                     last_name: "da Silva",
                     email: "joao@email.com",
                     document_type: "CPF",
-                    document_number: "12345678901"
+                    document_number: "12345678901",
+                    phone_number: "11999999999",
+                    billing_address: {
+                        street: "Rua Exemplo, 123"
+                    }
                 }
             };
-
 
             const res = await fetch("https://api-homologacao.getnet.com.br/v1/payments/qrcode", {
                 method: "POST",
                 headers: {
-                "Authorization": "Bearer " + token,
-                "Content-Type": "application/json",
-                "seller_id": sellerId
+                    "Authorization": "Bearer " + token,
+                    "Content-Type": "application/json",
+                    "seller_id": sellerId
                 },
                 body: JSON.stringify(body)
             });
@@ -78,7 +80,7 @@
 
             function voltar() {
                 window.location.href = "index.html";
-            }
-        </script>
-    </body>
+        }
+    </script>
+</body>
 </html>

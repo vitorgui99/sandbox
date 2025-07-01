@@ -1,25 +1,93 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-    <meta charset="UTF-8">
-    <title>Pagamento por Boleto</title>
+    <meta charset="UTF-8" />
+    <title>Pagamento por Boleto - Getnet</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="./source/boleto.css" />
+    <script src="https://unpkg.com/imask"></script>
 </head>
 <body>
-    <h2>Simulação de Pagamento com Boleto</h2>
+    <div class="container">
+        <h2>Pagamento com Boleto</h2>
 
-    <form onsubmit="simularBoleto(event)">
-        <label>ID do Cliente:</label>
-        <input type="text" id="customerId" value="cliente123">
+        <form onsubmit="simularBoleto(event)">
+            <div class="form-group">
+                <label for="customerId">ID do Cliente:</label>
+                <input type="text" id="customerId" required />
+            </div>
 
-        <label>Valor:</label>
-        <input type="text" id="valor" value="2000">
+            <div class="form-group">
+                <label for="firstName">Nome:</label>
+                <input type="text" id="firstName" required />
+            </div>
 
-        <button type="submit">Simular Boleto</button>
-    </form>
+            <div class="form-group">
+                <label for="lastName">Sobrenome:</label>
+                <input type="text" id="lastName" required />
+            </div>
 
-    <pre id="resultado"></pre>
+            <div class="form-group">
+                <label for="email">Email:</label>
+                <input type="email" id="email" required />
+            </div>
+
+            <div class="form-group">
+                <label for="documentType">Tipo de Documento:</label>
+                <select id="documentType" onchange="trocarMascara()">
+                <option value="CPF">CPF</option>
+                <option value="CNPJ">CNPJ</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="documentNumber">Número do Documento:</label>
+                <input type="text" id="documentNumber" required />
+            </div>
+
+            <div class="form-group">
+                <label for="valor">Valor (em centavos):</label>
+                <input type="number" id="valor" value="2000" required />
+            </div>
+
+            <div class="form-group">
+                <label for="vencimento">Data de Vencimento:</label>
+                <input type="date" id="vencimento" required />
+            </div>
+
+            <button type="submit">Gerar Boleto</button>
+        </form>
+
+        <div id="retorno-boleto" style="display:none; margin-top: 20px;">
+            <h3>Resultado:</h3>
+            <p><strong>Linha digitável:</strong> <span id="linhaDigitavel"></span></p>
+            <a id="linkBoleto" href="#" target="_blank" class="botao-link">🔗 Visualizar Boleto</a>
+        </div>
+
+        <h3>Resposta completa:</h3>
+        <pre id="resultado">Resposta será exibida aqui...</pre>
+
+        <a href="./index.html">
+            <button type="button">Voltar</button>
+        </a>
+    </div>
 
     <script>
+        let mask;
+
+        function trocarMascara() {
+        const tipo = document.getElementById('documentType').value;
+        const input = document.getElementById('documentNumber');
+
+        if (mask) mask.destroy();
+
+        mask = IMask(input, {
+            mask: tipo === 'CPF' ? '000.000.000-00' : '00.000.000/0000-00'
+        });
+        }
+
+        trocarMascara();
+
         async function simularBoleto(event) {
         event.preventDefault();
 
@@ -39,37 +107,57 @@
             },
             payment: {
             boleto: {
-                document_number: "12345678901",
-                expiration_date: "2025-12-31",
+                document_number: document.getElementById("documentNumber").value.replace(/\D/g, ""),
+                expiration_date: document.getElementById("vencimento").value,
                 instructions: "Pagar até a data de vencimento"
             }
             },
             customer: {
             customer_id: document.getElementById('customerId').value,
-            first_name: "João",
-            last_name: "da Silva",
-            email: "joao@email.com",
-            document_type: "CPF",
-            document_number: "12345678901"
+            first_name: document.getElementById('firstName').value,
+            last_name: document.getElementById('lastName').value,
+            email: document.getElementById('email').value,
+            document_type: document.getElementById('documentType').value,
+            document_number: document.getElementById('documentNumber').value.replace(/\D/g, "")
             },
             order: {
             order_id: "pedido456"
             }
         };
 
-        const res = await fetch("https://api-homologacao.getnet.com.br/v1/payments/boleto", {
-            method: "POST",
-            headers: {
-            "Authorization": "Bearer " + token,
-            "Content-Type": "application/json",
-            "seller_id": sellerId
-            },
-            body: JSON.stringify(body)
-        });
+        try {
+            const res = await fetch("https://api-homologacao.getnet.com.br/v1/payments/boleto", {
+                method: "POST",
+                headers: {
+                "Authorization": "Bearer " + token,
+                "Content-Type": "application/json",
+                "seller_id": sellerId
+                },
+                body: JSON.stringify(body)
+            });
 
-        const data = await res.json();
-        document.getElementById("resultado").textContent = JSON.stringify(data, null, 2);
-        }
+            let data;
+
+            try {
+                data = await res.json(); // tenta converter a resposta em JSON
+            } catch (jsonError) {
+                data = { erro: "Resposta não é um JSON válido.", status: res.status, statusText: res.statusText };
+            }
+
+            document.getElementById("resultado").textContent = JSON.stringify(data, null, 2);
+
+            if (res.ok && data.payment && data.payment.boleto) {
+                document.getElementById("linhaDigitavel").textContent = data.payment.boleto.barcode;
+                document.getElementById("linkBoleto").href = data.payment.boleto.pdf;
+                document.getElementById("retorno-boleto").style.display = "block";
+            }
+
+            } catch (error) {
+            document.getElementById("resultado").textContent = JSON.stringify({
+                erro: "Erro ao fazer requisição",
+                mensagem: error.message
+            }, null, 2);
+            }}
     </script>
 </body>
 </html>

@@ -1,0 +1,92 @@
+body {
+    font-family: 'Segoe UI', sans-serif;
+    font-weight: bold;
+    background-color: rgb(223, 31, 31);
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    min-height: 100vh;
+}
+
+.container {
+    background-color: #fff;
+    width: 100%;
+    max-width: 600px;
+    margin: 40px auto;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+    box-sizing: border-box;
+}
+
+h2 {
+    text-align: center;
+    margin-bottom: 30px;
+    color: #000;
+}
+
+.form-group {
+    margin-bottom: 20px;
+    font-weight: bold;
+}
+
+label {
+    display: block;
+    margin-bottom: 5px;
+    color: #000;
+}
+
+input,
+select {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid rgb(247, 37, 37);
+    border-radius: 5px;
+    box-sizing: border-box;
+}
+
+button {
+    width: 100%;
+    padding: 12px;
+    background-color: rgb(223, 31, 31);
+    color: white;
+    font-size: 16px;
+    font-weight: bold;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+button:hover {
+    background-color: rgb(250, 98, 98);
+}
+
+.botao-link {
+    display: inline-block;
+    margin-top: 10px;
+    background-color: rgb(223, 31, 31);
+    color: #fff;
+    padding: 10px 14px;
+    text-decoration: none;
+    border-radius: 6px;
+    transition: background 0.3s ease;
+}
+
+.botao-link:hover {
+    background-color: rgb(250, 98, 98);
+}
+
+
+pre {
+    background-color: #f9f9f9;
+    padding: 15px;
+    border: 1px solid rgb(247, 37, 37);
+    border-radius: 8px;
+    max-height: 300px;
+    overflow: auto;
+    font-size: 14px;
+    color: #000;
+}
