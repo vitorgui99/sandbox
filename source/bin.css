@@ -1,0 +1,84 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: rgb(223, 31, 31);
+    margin: 0;
+    font-weight: bold;
+    padding: 0;
+}
+
+header {
+    background-color: rgb(223, 31, 31);
+    color: white;
+    padding: 20px 0;
+    text-align: center;
+}
+
+.container {
+    max-width: 600px;
+    margin: 40px auto;
+    padding: 20px;
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.05);
+}
+
+form {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+form input {
+    flex: 1;
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid rgb(247, 37, 37);
+    border-radius: 5px;
+}
+
+form button {
+    padding: 10px 20px;
+    font-size: 16px;
+    background-color: rgb(223, 31, 31);
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+form button:hover {
+    background-color: rgb(250, 98, 98);
+}
+
+.info-group {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+}
+
+.info-group label {
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.info-group pre {
+    background: #f1f1f1;
+    border: 1px solid rgb(247, 37, 37);
+    padding: 8px;
+    border-radius: 4px;
+    min-height: 24px;
+}
+
+#voltar button {
+    padding: 10px 20px;
+    font-size: 16px;
+    background-color: rgb(223, 31, 31);
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+#voltar button:hover {
+    background-color: rgb(250, 98, 98);
+}

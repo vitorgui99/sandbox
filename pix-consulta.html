@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Consultar Transação PIX</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="#">
+</head>
+<body>
+    <div class="container">
+        <h2>Consulta de Transação PIX</h2>
+
+        <label for="paymentId">Payment ID:</label>
+        <input type="text" id="paymentId" placeholder="Informe o payment_id da transação">
+
+        <button onclick="consultarPix()">Consultar Transação</button>
+
+        <pre id="resultado">A resposta será exibida aqui...</pre>
+        <button onclick="voltar()">Voltar</button>
+    </div>
+
+    <script>
+        async function consultarPix() {
+        const token = sessionStorage.getItem("access_token");
+        const sellerId = sessionStorage.getItem("seller_id");
+        const paymentId = document.getElementById("paymentId").value;
+
+        if (!token || !sellerId || !paymentId) {
+            alert("Preencha todos os campos e gere um token.");
+            return;
+        }
+
+        const url = `https://api-homologacao.getnet.com.br/v1/payments/qrcode/pix/${paymentId}`;
+
+        const res = await fetch(url, {
+            method: "GET",
+            headers: {
+            "Authorization": "Bearer " + token,
+            "Content-Type": "application/json",
+            "seller_id": sellerId
+            }
+        });
+
+        const data = await res.json();
+        document.getElementById("resultado").textContent = JSON.stringify(data, null, 2);
+        }
+
+        function voltar() {
+        window.location.href = "pix.html";
+        }
+    </script>
+</body>
+</html>

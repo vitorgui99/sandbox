@@ -27,6 +27,9 @@
 
         <pre id="resultado">Resposta será exibida aqui...</pre>
 
+        <!--Consulta PIX em breve-->
+        <button>Em breve...</button>
+
         <button onclick="voltar()">Voltar para a Página Inicial</button>
     </div>
 
@@ -61,6 +64,10 @@
 
         const data = await res.json();
         document.getElementById("resultado").textContent = JSON.stringify(data, null, 2);
+        }
+
+        function consultaPix() {
+            window.location.href = "pix-consulta.html";
         }
 
         function voltar() {

@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Consulta Bin</title>
+    <link rel="stylesheet" href="./source/bin.css">
+</head>
+<body>
+    <header>
+        <h1>Consulta bin</h1>
+    </header>
+    <div class="container">
+        <form onsubmit="consultarBin(event)">
+        <input type="text" id="cardBin" placeholder="Digite os 4 primeiros dígitos" maxlength="4" required />
+        <button type="submit">Consultar</button>
+        </form>
+
+        <div class="info-group">
+        <div>
+            <label for="bin">Bin:</label>
+            <pre id="bin"></pre>
+        </div>
+        <div>
+            <label for="brand">Brand:</label>
+            <pre id="brand"></pre>
+        </div>
+        <div>
+            <label for="brand_code">Brand code:</label>
+            <pre id="brand_code"></pre>
+        </div>
+        <div>
+            <label for="brazilian_issued">Brazilian issued:</label>
+            <pre id="brazilian_issued"></pre>
+        </div>
+        <div>
+            <label for="country">Country:</label>
+            <pre id="country"></pre>
+        </div>
+        <div>
+            <label for="country_code">Country code:</label>
+            <pre id="country_code"></pre>
+        </div>
+        <div>
+            <label for="country_code_iso">Country code iso:</label>
+            <pre id="country_code_iso"></pre>
+        </div>
+        <div>
+            <label for="issuer">Issuer:</label>
+            <pre id="issuer"></pre>
+        </div>
+        <div>
+            <label for="product">Product:</label>
+            <pre id="product"></pre>
+        </div>
+        <div>
+            <label for="type">Type:</label>
+            <pre id="type"></pre>
+        </div>
+        </div>
+        <a id="voltar" href="./cartao.html">
+            <button type="button">voltar</button>
+        </a>
+    </div>
+
+    <script>
+        async function consultarBin(event) {
+        event.preventDefault();
+
+        const bin = document.getElementById('cardBin').value.trim();
+        const token = sessionStorage.getItem('access_token');
+
+        if (!token) {
+            alert("Token não encontrado. Volte à página inicial.");
+            return;
+        }
+
+        if (bin.length < 4) {
+            alert("Digite pelo menos 4 dígitos.");
+            return;
+        }
+
+        try {
+            const response = await fetch(`https://api-homologacao.getnet.com.br/v1/cards/binlookup/${bin}`, {
+            method: 'GET',
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+            });
+
+            const data = await response.json();
+
+            if (!response.ok || !data.results || data.results.length === 0) {
+            alert("BIN não encontrado ou resposta inválida.");
+            return;
+            }
+
+            const info = data.results[0];
+
+            document.getElementById('bin').textContent = info.bin || "";
+            document.getElementById('brand').textContent = info.brand || "";
+            document.getElementById('brand_code').textContent = info.brand_code || "";
+            document.getElementById('brazilian_issued').textContent = info.brazilian_issued ? "Sim" : "Não";
+            document.getElementById('country').textContent = info.country || "";
+            document.getElementById('country_code').textContent = info.country_code || "";
+            document.getElementById('country_code_iso').textContent = info.country_code_iso || "";
+            document.getElementById('issuer').textContent = info.issuer || "";
+            document.getElementById('product').textContent = info.product || "";
+            document.getElementById('type').textContent = info.type || "";
+
+        } catch (error) {
+            alert("Erro ao consultar o BIN: " + error.message);
+        }
+        }
+    </script>
+</body>
+</html>
+
+
+
