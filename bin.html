@@ -83,12 +83,13 @@
 
             try {
                 const response = await fetch(`/api/bin?bin=${bin}`, {
-                method: 'GET',
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                    'seller_id': sellerId
-                }
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'seller_id': sellerId
+                    }
                 });
+
 
                 const contentType = response.headers.get("Content-Type");
 
